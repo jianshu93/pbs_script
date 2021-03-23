@@ -1,0 +1,23 @@
+#!/bin/bash
+#PBS -N MaxBin-pico-jianshu
+#PBS -l pmem=2gb
+#PBS -l nodes=8:ppn=8
+#PBS -l walltime=48:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550,551,552
+#PBS -m abe
+#PBS -M jianshu.zhao@gatech.edu
+
+
+#variables
+wd=/nv/hmicro1/jzhao399/scratch/
+wd1=/gpfs/pace2/project/bio-konstantinidis/gbrandt6/projects/pico/reads
+name=pico${PBS_ARRAYID}
+assembly=${wd1}/06.megahitAssembly/${name}/${name}.contigs.long.fa
+reads=${wd}/05.trimmedFastA/${name}.CoupledReads.fasta
+output=${wd}/09.MaxBin/${name}
+shared=/gpfs/pace2/project/bio-konstantinidis/gbrandt6/apps/MaxBin-2.2.4
+
+$shared/run_MaxBin.pl -contig $assembly -reads $reads -out $output -thread 8
