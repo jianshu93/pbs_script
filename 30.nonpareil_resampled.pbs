@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -N nonpareil_resampled
+#PBS -l nodes=1:ppn=24
+#PBS -l mem=20gb
+#PBS -l walltime=48:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+name=pico${PBS_ARRAYID}
+module purge
+source ~/.bashrc
+conda init bash
+conda init bash
+conda activate base
+conda activate centrifuge
+which centrifuge
+which perl
+which diamond
+#VARIABLES
+wd=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads
+gunzip ${wd}/${name}.resampled.R2.fa.gz
+reads2=${wd}/${name}.resampled.R2.fa
+outdir=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/05.nonpareil_resample
+
+~/p-ktk3-0/miniconda3/bin/nonpareil -f fasta -s ${reads2} -T kmer -b ${outdir}/${name}.2.nonpareil -t 24
+~/p-ktk3-0/miniconda3/bin/pigz -p 24 ${wd}/${name}.resampled.R2.fa

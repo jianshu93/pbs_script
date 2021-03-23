@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -N mOTUs-pico
+#PBS -l mem=120gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=120:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+name=pico${PBS_ARRAYID}
+
+module purge
+source ~/.bash_profile
+conda init bash
+conda activate base
+conda activate mOTUs_v2
+
+cd /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/apps/mOTUs_v2
+reads=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads
+output=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/24.mOTUs
+
+gunzip ${reads}/${name}.resampled_1.fastq.gz
+gunzip ${reads}/${name}.resampled_2.fastq.gz
+./motus profile -f ${reads}/${name}.resampled_1.fastq -r ${reads}/${name}.resampled_2.fastq -t 24 > ${output}/${name}.taxonomy_profile.txt
+
+~/p-ktk3-0/miniconda3/bin/pigz -p 24 ${reads}/${name}.resampled_1.fastq
+~/p-ktk3-0/miniconda3/bin/pigz -p 24 ${reads}/${name}.resampled_2.fastq

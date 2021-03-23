@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -N GWMC_dRep
+#PBS -l mem=80gb
+#PBS -l nodes=1:ppn=28
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/GWMC/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/GWMC/${PBS_JOBNAME}_${PBS_JOBID}.err
+
+module purge
+
+module load use.own
+module load usearch11/11.0.667
+
+source ~/.bash_profile
+conda init bash
+conda activate base
+
+wd=/nv/hmicro1/jzhao399/scratch/GWMC
+
+~/data/miniconda3/bin/dRep dereplicate -p 28 --S_algorithm fastANI -sa 95 ${wd}/06B.DAS_all_bins_dRep5 -g ${wd}/06B.DAS_all_bins/*.fasta --genomeInfo ${wd}/06B.DAS_all_bins/GWMC_bins_checkm_qa_all_new.csv
+

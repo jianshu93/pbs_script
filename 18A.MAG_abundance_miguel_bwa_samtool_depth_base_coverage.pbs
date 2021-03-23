@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -N MAG-abudance-coverm-make-miguel-new
+#PBS -l mem=3gb
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=10:00:00
+#PBS -q iw-shared-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,282,132,244,131
+
+
+module load open64/4.5.1
+module load bwa/0.7.4
+
+source ~/.bashrc
+
+conda init bash
+
+conda activate base
+
+
+
+name=pico${PBS_ARRAYID}
+wd=/nv/hmicro1/jzhao399/scratch/18A.TAD80.miguel.new.bam
+reads_dir=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/05.trimmedFastA
+output=/nv/hmicro1/jzhao399/scratch/18A.TAD80.miguel.new.bam
+
+for F in ${wd}/${name}/*.bam; do
+	BASE=${F##*/}
+	SAMPLE=${BASE%.*}
+	min_coverage=1
+	echo -n ${F}$'\t' >> ${wd}/${name}/${SAMPLE}_coverage_base_length3.txt
+	~/data/miniconda3/bin/samtools mpileup ${F} | awk -v X=${min_coverage} '$4>=X' | wc -l >> ${wd}/${name}/${SAMPLE}_coverage_base_length3.txt
+done

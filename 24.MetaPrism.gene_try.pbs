@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -N MetaPrism
+#PBS -l nodes=1:ppn=20
+#PBS -l mem=50gb
+#PBS -l walltime=24:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 282,284,304,497,539,540,550,551,552
+
+name=pico${PBS_ARRAYID}
+module purge
+source ~/.bashrc
+conda init bash
+conda init bash
+conda activate base
+conda activate centrifuge
+which centrifuge
+which perl
+which diamond
+index=~/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/p_compressed
+output=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/03.MetaPrism
+assembly=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/02.megahit
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_gene_prepare.pl -k
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_gene.pl -p 20 ${output}/${name}.gene ${assembly}/${name}/${name}.contigs.fa ${name}.resampled.R1.fq.gz ${name}.resampled.R2.fq.gz
+~/p-kt3-0/miniconda3/envs/centrifuge/bin/perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_taxon_centrifuge.pl -p 20 ${output}/${name}.gene.region.abundance.txt ${assembly}/${name}/${name}.contigs.fa ${index} > ${output}/${name}_taxon.region.abundance.txt

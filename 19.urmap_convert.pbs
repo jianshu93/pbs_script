@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -N urmap
+#PBS -l mem=24gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=72:00:00
+#PBS -q biocluster-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+
+module load open64/4.5.1
+module load bwa/0.7.4
+
+source ~/.bashrc
+
+conda init bash
+
+conda activate base
+
+
+
+name=pico${PBS_ARRAYID}
+wd=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/06.megahitAssembly/${name}
+reads_dir=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/03.trimmedFastQ
+output=/nv/hmicro1/jzhao399/scratch/19.urmap
+
+
+/nv/hmicro1/jzhao399/data/miniconda3/bin/samtools view -bS ${output}/${name}.sam > ${output}/${name}.bam
+/nv/hmicro1/jzhao399/data/miniconda3/bin/samtools sort ${output}/${name}.bam -o ${output}/${name}_sorted.bam

@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -N metaxa2-rpoB-pico
+#PBS -l mem=120gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=72:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+name=pico${PBS_ARRAYID}
+
+module purge
+source ~/.bash_profile
+conda init bash
+conda activate base
+which seqtk
+which metaxa2
+which pigz
+cd /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads
+
+gunzip ${name}.resampled.R1.fa.gz
+gunzip ${name}.resampled.R2.fa.gz
+seqtk mergepe ${name}.resampled.R1.fa ${name}.resampled.R2.fa > ${name}.resampled.interleaved.fa
+
+metaxa2 -i ${name}.resampled.interleaved.fa -g RPOB -o ${name}.resampled.rpoB --cpu 24 --usearch 11.0.667 --plus T
+pigz -p 24 ${name}.resampled.R1.fa
+pigz -p 24 ${name}.resampled.R2.fa
+pigz -p 24 ${name}.resampled.interleaved.fa

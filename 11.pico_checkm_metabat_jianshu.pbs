@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -N pico_checkm
+#PBS -l mem=12gb
+#PBS -l nodes=1:ppn=64
+#PBS -l walltime=24:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+#PBS -m abe
+#PBS -M jianshu.zhao@gatech.edu
+
+
+module load boost/1.53.0
+module load ncbi_blast/2.2.29
+module load hmmer/3.1b1
+module load ocaml/4.01.0
+module load pplacer/1.1alpha15
+module load prodigal/2.6.1
+
+
+name=pico${PBS_ARRAYID}
+
+wd=/nv/hmicro1/jzhao399/scratch/
+
+input=/nv/hmicro1/jzhao399/scratch/10.MetaBat2/${name}
+output=/nv/hmicro1/jzhao399/scratch/11B.CheckM_metabat/${name}
+shared=/nv/hmicro1/jzhao399/data/apps/miniconda3/envs/python2/bin/
+
+
+
+$shared/checkm lineage_wf $input $output -x fa -t 64 --pplacer_threads 8 --tab_table -f ${name}_qa.txt

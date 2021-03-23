@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -N Metaxa-pico
+#PBS -l mem=32gb
+#PBS -l nodes=1:ppn=64
+#PBS -l walltime=24:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+module load gcc/4.4.5
+module load boost/1.53.0
+module load python/2.7
+module load ncbi_blast/2.2.28
+module load hmmer/3.0
+module load mafft/7.245
+
+name=pico${PBS_ARRAYID}
+wd=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/05.trimmedFastA
+output=/nv/hmicro1/jzhao399/scratch/14B.Metaxa2_usearch
+
+/nv/hmicro1/jzhao399/data/apps/Metaxa2_2.2/metaxa2 -i ${wd}/${name}.CoupledReads.fasta --plus T --usearch 7.0.1001 --usearch_bin /nv/hmicro1/jzhao399/data/apps/usearch_64/usearch -o $output/${name} -t 64

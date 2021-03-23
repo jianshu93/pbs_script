@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -N Metabat-pico
+#PBS -l mem=12gb
+#PBS -l nodes=16:ppn=16
+#PBS -l walltime=96:00:00
+#PBS -q bioforce-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+module load bowtie2/2.3.2
+module load samtools/0.1.18
+
+wd=/gpfs/pace2/project/bio-konstantinidis/gbrandt6/projects/pico/reads
+name=pico${PBS_ARRAYID}
+assembly=${wd}/06.megahitAssembly/${name}/${name}.contigs.long.fa
+for_reads=${wd}/03.trimmedFastQ/${name}_1P.fastq
+rev_reads=${wd}/03.trimmedFastQ/${name}_2P.fastq
+output=/nv/hmicro1/jzhao399/scratch/10.MetaBat2/${name}
+shared=/gpfs/pace2/project/bio-konstantinidis/gbrandt6/apps/MetaBAT/metabat
+
+#bowtie2-build ${assembly} ${assembly}
+#bowtie2 -x ${assembly} -1 ${for_reads} -2 ${rev_reads} -S ${assembly}.sam
+#samtools view -bS $assembly.sam -o $assembly.bam
+#samtools sort $assembly.bam $assembly.sorted
+$shared/jgi_summarize_bam_contig_depths --outputDepth $output.depth.txt $assembly.sorted.bam
+$shared/metabat2 -i $assembly -a $output.depth.txt -o $output -t 16

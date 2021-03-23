@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -N multitrim
+#PBS -l nodes=1:ppn=20
+#PBS -l mem=120gb
+#PBS -l walltime=12:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+name=pico${PBS_ARRAYID}
+module purge
+source ~/.bashrc
+conda init bash
+conda init bash
+conda activate base
+conda activate centrifuge
+reads=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads
+assembly=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/02.megahit
+rm ${assembly}/${name}/${name}_gene.sam
+rm -rf ${assembly}/${name}/intermediate_contigs
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/removesmalls i=1000 ${assembly}/${name}/${name}.contigs.fa > ${assembly}/${name}/${name}.contigs.long.fa 
+python ~/pprodigal.py -i ${assembly}/${name}/${name}.contigs.long.fa -P 20 -a ${assembly}/${name}.contigs.long.faa -d ${assembly}/${name}.contigs.long.fna -o ${assembly}/${name}.contigs.long.gbk --procedure meta
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/minimap2 -a -t 20 -x sr -o ${assembly}/${name}/${name}.contigs.long.sam ${assembly}/${name}/${name}.contigs.long.fa ${reads}/${name}.resampled_1.fastq.gz ${reads}/${name}.resampled_2.fastq.gz
+
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/samtools view -bS -@ 20 ${assembly}/${name}/${name}.contigs.long.sam > ${assembly}/${name}/${name}.contigs.long.bam
+rm ${assembly}/${name}/${name}.contigs.long.sam
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/samtools sort -@ 20 -o ${assembly}/${name}/${name}.contigs.long.sorted.bam ${assembly}/${name}/${name}.contigs.long.bam
+rm ${assembly}/${name}/${name}.contigs.long.bam

@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -N MAG_abundance
+#PBS -l mem=24gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+
+source ~/.bashrc
+
+conda init bash
+
+conda activate base
+
+
+
+name=pico${PBS_ARRAYID}
+wd=/nv/hmicro1/jzhao399/data/pico/12C_DAS_allbin_usearch64_drep/dereplicated_genomes
+bam_dir=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/06.megahitAssembly
+output=/nv/hmicro1/jzhao399/scratch
+
+~/data/miniconda3/bin/coverm genome -d ${wd}/${name} -x fasta -b ${bam_dir}/${name}/${name}.contigs.long.fa.sorted.bam --min-covered-fraction 0.001 -m trimmed_mean --trim-min 0.1 --trim-max 0.9 >> ${output}/${name}_TAD80.txt
+~/data/miniconda3/bin/coverm genome -d ${wd}/${name} -x fasta -b ${bam_dir}/${name}/${name}.contigs.long.fa.sorted.bam --min-covered-fraction 0.001 -m trimmed_mean --trim-min 0.05 --trim-max 0.95 >> ${output}/${name}_TAD90.txt
+~/data/miniconda3/bin/coverm genome -d ${wd}/${name} -x fasta -b ${bam_dir}/${name}/${name}.contigs.long.fa.sorted.bam --min-covered-fraction 0.001 >> ${output}/${name}_RA.txt

@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N pico-DAS-Fasta-to-Scaffolds2Bin
+#PBS -l mem=8gb
+#PBS -l nodes=1:ppn=16
+#PBS -l walltime=6:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+
+
+name=pico${PBS_ARRAYID}
+
+
+scalffold_to_bin=/nv/hmicro1/jzhao399/data/apps/DAS_Tool/src
+
+${scalffold_to_bin}/Fasta_to_Scaffolds2Bin.sh -i /nv/hmicro1/jzhao399/scratch/09.MaxBin/${name} -e fasta > /nv/hmicro1/jzhao399/scratch/12B.DAS_bins/${name}.Maxbin.tsv
+${scalffold_to_bin}/Fasta_to_Scaffolds2Bin.sh -i /nv/hmicro1/jzhao399/scratch/10.MetaBat2/${name} -e fa > /nv/hmicro1/jzhao399/scratch/12B.DAS_bins/${name}.MetaBAT.tsv

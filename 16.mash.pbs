@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N MASH-pico
+#PBS -l mem=32gb
+#PBS -l nodes=1:ppn=64
+#PBS -l walltime=120:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+module load gcc/4.9.0
+module load capnproto-c++/0.5.3
+module load autoconf/2.69 
+module load zlib/1.2.8
+module unload boost/1.53.0
+module load boost/1.57.0
+module load mash/1.0.2
+
+wd=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/05.trimmedFastA
+name=pico${PBS_ARRAYID}
+reads=${wd}/05.trimmedFastA/${name}.CoupledReads.fasta
+Mash_sketch=${wd}/05.trimmedFastA/Mash_combined_sketch.msh
+outdir=/nv/hmicro1/jzhao399/scratch/16.mash
+
+#time mash sketch -k 32 -s 10000 ${reads}
+mash dist ${Mash_sketch} ${Mash_sketch} > ${outdir}/Mash_pariwisedist

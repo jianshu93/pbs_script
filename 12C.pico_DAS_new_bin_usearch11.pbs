@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -N pico-DAS-tool-new-bin
+#PBS -l mem=24gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=12:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+module load use.own
+module load R/3.3.2
+module load intel/15.0
+module load ruby/2.5.1
+module load usearch/11.0.667
+module load prodigal/2.6.1
+
+#variables
+
+name=pico${PBS_ARRAYID}
+assembly=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/06.megahitAssembly/${name}/${name}.contigs.long.fa
+script=/nv/hmicro1/jzhao399/data/apps/Genevieve_scripts/Scripts/DAS.to.FastA.pl
+binfile=/nv/hmicro1/jzhao399/scratch/12B.DAS_bins_usearch11/${name}_DASTool_scaffolds2bin.txt
+
+
+${script} -b ${binfile} -c ${assembly} -o /nv/hmicro1/jzhao399/scratch/12C_DAS_allbin_usearch11/${name}_DASbins
+

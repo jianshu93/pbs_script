@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N gtdbtk_pico_vamb
+#PBS -l mem=320gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=72:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+
+module purge
+
+source ~/.bash_profile
+conda init bash
+conda activate gtdbtk
+
+wd=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/02.megahit/vamb_all_new/
+
+~/p-ktk3-0/miniconda3/envs/gtdbtk/bin/gtdbtk classify_wf --genome_dir ${wd}/bins --out_dir ${wd}/bins_gtdbtk --cpus 24 --pplacer_cpus 8 -x fna

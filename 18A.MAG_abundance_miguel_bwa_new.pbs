@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -N MAG-abudance-coverm-make-miguel-new
+#PBS -l mem=48gb
+#PBS -l nodes=1:ppn=48
+#PBS -l walltime=6:00:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,282
+
+
+module load open64/4.5.1
+module load bwa/0.7.4
+
+source ~/.bashrc
+
+conda init bash
+
+conda activate base
+
+
+
+name=pico${PBS_ARRAYID}
+wd=/nv/hmicro1/jzhao399/scratch/12C_DAS_allbin_usearch64
+reads_dir=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/05.trimmedFastA
+output=/nv/hmicro1/jzhao399/scratch/18A.TAD80.miguel.new.bam
+
+for F in ${wd}/${name}/*.fasta; do
+	BASE=${F##*/}
+	SAMPLE=${BASE%.*}
+	~/data/miniconda3/bin/coverm make -o ${output}/${name} -r $F -t 48 --interleaved ${reads_dir}/${name}.CoupledReads.fasta -p bwa-mem
+done

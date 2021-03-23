@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -N MetaPrism
+#PBS -l nodes=1:ppn=20
+#PBS -l mem=120gb
+#PBS -l walltime=32:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 284,540
+
+name=pico${PBS_ARRAYID}
+module purge
+source ~/.bashrc
+conda init bash
+conda init bash
+conda activate base
+conda activate centrifuge
+which centrifuge
+which perl
+which diamond
+index=~/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/p_compressed
+output=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/03.MetaPrism_new
+assembly=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/02.megahit
+perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_gene_prepare.pl -k
+reads_1=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_1.fastq.gz
+reads_2=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_2.fastq.gz
+gunzip ${reads_1}
+gunzip ${reads_2}
+perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_gene.pl -p 20 ${output}/${name}.gene ${assembly}/${name}/${name}.contigs.fa /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_1.fastq /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_2.fastq
+perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_taxon_centrifuge.pl -p 20 ${output}/${name}.gene.region.abundance.txt ${assembly}/${name}/${name}.contigs.fa ${index} > ${output}/${name}_taxon.region.abundance.txt
+pigz -p 20 /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_1.fastq
+pigz -p 20 /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_2.fastq

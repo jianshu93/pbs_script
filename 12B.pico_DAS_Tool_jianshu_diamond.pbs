@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -N pico-DAS_Tool-jianshu
+#PBS -l mem=64gb
+#PBS -l nodes=1:ppn=64
+#PBS -l walltime=24:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 266,282,284,539,550
+
+
+module load use.own
+
+module load usearch_64/7.0.1001
+module load intel/15.0
+module load ruby/2.5.1
+module load prodigal/2.6.1
+module load boost/1.53.0
+module load python/2.7
+module load ncbi_blast/2.2.29 
+module load diamond/0.9.31.132 
+
+name=pico${PBS_ARRAYID}
+assembly=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/06.megahitAssembly/${name}/${name}.contigs.long.fa
+maxbin=/nv/hmicro1/jzhao399/scratch/12B.DAS_bins/${name}.Maxbin.tsv
+metabat=/nv/hmicro1/jzhao399/scratch/12B.DAS_bins/${name}.MetaBAT.tsv
+output=/nv/hmicro1/jzhao399/scratch/12B.DAS_bins_diamond/${name}
+shared=/nv/hmicro1/jzhao399/data/apps/DAS_Tool/DAS_Tool
+
+$shared -i ${maxbin},${metabat} -l MaxBin,MetaBAT -c ${assembly} -o ${output} -t 64 --search_engine diamond --create_plots --write_bins --db_directory /nv/hmicro1/jzhao399/data/apps/DAS_Tool/db

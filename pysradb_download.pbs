@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N pysradb-download
+#PBS -l mem=28gb
+#PBS -l nodes=1:ppn=28
+#PBS -l walltime=48:00:00
+#PBS -q biocluster-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+
+
+
+source ~/.bashrc
+
+conda init bash
+
+conda activate base
+
+pysradb download --out-dir ~/scratch/GWMC -p PRJNA509305

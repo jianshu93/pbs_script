@@ -1,0 +1,25 @@
+#!/bin/bash
+#PBS -N pico-vibrant
+#PBS -l nodes=1:ppn=20
+#PBS -l mem=36gb
+#PBS -l walltime=12:00:00
+#PBS -q iw-shared-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+module purge
+
+source ~/.bashrc
+
+conda init bash
+
+conda activate base
+
+
+
+
+name=pico${PBS_ARRAYID}
+output=/nv/hmicro1/jzhao399/scratch/19.Vibrant
+
+~/data/miniconda3/bin/VIBRANT_run.py -i /nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/06.megahitAssembly/${name}/${name}.contigs.long.fa -t 20 -folder ${output}/${name} -d /nv/hmicro1/jzhao399/data/Vibrant_databases/databases

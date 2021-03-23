@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N ROCker-rpoB
+#PBS -l mem=120gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=120:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+
+module load argtable/2-13
+module load ruby/2.6.2
+module load boost/1.70.0
+
+module purge
+source ~/.bash_profile
+conda init bash
+conda activate base
+
+cd ~/data3/03.ARGsSoilWater/03.ROCKerModel_build/01.blaTEM/02.model_NegativeSHVBetw_CTXOXYKPC_33Neg_11Posi/02.ROCkerModel_250Len
+
+/storage/home/hcoda1/4/jzhao399/shared-p/apps/rocker/bin/ROCker build -P blaTEM.Positive.ID -N blaTEM.Negative.ID -l 250 -o blaTEM_Model_250.Diamond -t 24
+/storage/home/hcoda1/4/jzhao399/shared-p/apps/rocker/bin/ROCker compile -a blaTEM_Model_250.Diamond.ref.aln -b blaTEM_Model_250.Diamond.ref.blast -k blaTEM_Model_250.Diamond.rocker
+/storage/home/hcoda1/4/jzhao399/shared-p/apps/rocker/bin/ROCker plot -k blaTEM_Model_250.Diamond.rocker -b blaTEM_Model_250.Diamond.ref.blast -o blaTEM_Model_250.Diamond.rocker.pdf --color --tag-negatives -t 24
+/storage/home/hcoda1/4/jzhao399/shared-p/apps/rocker/bin/ROCker search -i ~/data3/PaddySoil/LSL_AsContam/04.trimmed_fasta/LSJ_1.CoupledReads.fa -k arsMModel.rocker -o LSJ_1.arsM.blast --search diamond -t 24
+

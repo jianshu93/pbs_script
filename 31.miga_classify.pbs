@@ -1,0 +1,23 @@
+#!/bin/bash
+#PBS -N miga_classify
+#PBS -l nodes=1:ppn=24
+#PBS -l mem=80gb
+#PBS -l walltime=72:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+
+
+source ~/.bashrc
+module purge
+module load intel/19.0.5
+module load sqlite/3.30.1
+module load ruby/2.7.0
+module load r/3.6.0
+module load prodigal/2.6.3
+module load scythe/0.994
+module load python/
+#VARIABLES
+cd /storage/home/hcoda1/4/jzhao399/p-ktk3-0/.miga_db 
+~/shared-p/bin/miga classify_wf --db-path /storage/home/hcoda1/4/jzhao399/p-ktk3-0/ -c -j 24 -t 1 -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/21.miga_classify /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/08.DAS_miga_derep/.fasta

@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -N Microbe_census
+#PBS -l nodes=1:ppn=24
+#PBS -l pmem=1gb
+#PBS -l walltime=12:00:00
+#PBS -q microcluster
+#PBS -o /nv/hmicro1/jzhao399/data/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/data/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+
+
+
+wd=/nv/hmicro1/jzhao399/gbrandt6/projects/pico/reads/03.trimmedFastQ
+output=/nv/hmicro1/jzhao399/data/pico/
+python /nv/hmicro1/jzhao399/data/apps/miniconda3/bin/run_microbe_census.py -t 24 ${wd}/pico${PBS_ARRAYID}_1P.fastq,${wd}/pico${PBS_ARRAYID}_2P.fastq ${output}/13.MicrobeCensus/pico${PBS_ARRAYID}.MicrobeCensus_output.txt
+

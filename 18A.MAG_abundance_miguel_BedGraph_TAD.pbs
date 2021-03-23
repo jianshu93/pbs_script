@@ -1,0 +1,35 @@
+#!/bin/bash
+#PBS -N MAG-abudance-coverm-make
+#PBS -l mem=24gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=48:00:00
+#PBS -q biocluster-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/log/pico/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+
+module load gcc/4.9.0
+
+module load ruby/2.5.1
+
+source ~/.bashrc
+
+conda init bash
+
+conda activate base
+
+
+
+name=pico${PBS_ARRAYID}
+wd=/nv/hmicro1/jzhao399/scratch/18A.TAD80.cov/
+MAGs_dir=/nv/hmicro1/jzhao399/data/pico/12C_DAS_allbin_usearch64_drep/dereplicated_genomes
+output=/nv/hmicro1/jzhao399/scratch/18A.TAD80.TAD/${name}
+output1=/nv/hmicro1/jzhao399/scratch/18A.TAD80.TAD
+script=/nv/hmicro1/jzhao399/data/apps/enveomics/Scripts/BedGraph.tad.rb
+for F in ${wd}/${name}/*.cov.txt; do
+	BASE=${F##*/}
+	SAMPLE=${BASE%.*}
+	${script} -i $F -r 0.8 >> ${output}/${SAMPLE}.TAD80.txt
+	${script} -i $F -r 0.9 >> ${output}/${SAMPLE}.TAD90.txt
+done

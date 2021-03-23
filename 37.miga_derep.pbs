@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N miga_derep
+#PBS -l mem=50gb
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=48:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+
+module purge
+source ~/.bash_profile
+conda init bash
+conda activate miga
+~/shared-p/bin/miga get_db --local-dir /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/.miga_db
+~/shared-p/bin/miga derep_wf --medoids --aai-p diamond --ani-p fastani -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/07B.DAS_allbins_miga_derepfast /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/07B.DAS_allbins/*.fasta -j 24 -t 1

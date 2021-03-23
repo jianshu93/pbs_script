@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -N MetaPrism_20_db
+#PBS -l nodes=1:ppn=20
+#PBS -l mem=180gb
+#PBS -l walltime=48:00:00
+#PBS -q inferno
+#PBS -A GT-ktk3-CODA20
+#PBS -o /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/scripts/log/${PBS_JOBNAME}_${PBS_JOBID}.err
+#PBS -t 127,131,132,244,245,247,264-266,281,282,284,304,497,539,540,550-552
+
+name=pico${PBS_ARRAYID}
+module purge
+source ~/.bashrc
+conda init bash
+conda init bash
+conda activate base
+conda activate centrifuge
+which centrifuge
+which perl
+which diamond
+index=~/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/abv
+output=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/03.MetaPrism_predicted
+assembly=/storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/02.megahit
+python ~/pprodigal.py -i ${assembly}/${name}/${name}.contigs.fa -d ${assembly}/${name}/${name}.contigs.fna -o ${assembly}/${name}/${name}.contigs.gbk -P 20 -p meta
+minimap2 -a -t 20 -x sr -o ${assembly}/${name}/${name}_gene.sam ${assembly}/${name}/${name}.contigs.fna /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_1.fastq.gz /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_2.fastq.gz
+samtools view -bS -@ 20 ${assembly}/${name}/${name}_gene.sam > ${assembly}/${name}/${name}_gene.bam 
+samtools sort -@ 20 -O bam -o ${assembly}/${name}/${name}_gene_sorted.bam ${assembly}/${name}/${name}_gene.bam
+
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_gene_prepare.pl -k
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_gene.pl -p 20 ${output}/${name}.gene ${assembly}/${name}/${name}.contigs.fna /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_1.fastq.gz /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/pico_new/01.resample_reads/${name}.resampled_2.fastq.gz
+~/p-ktk3-0/miniconda3/envs/centrifuge/bin/perl /storage/home/hcoda1/4/jzhao399/p-ktk3-0/rich_project_bio-konstantinidis/centrifuge_db/MetaPrism/MetaPrism_taxon_centrifuge.pl -p 20 ${output}/${name}.gene.region.abundance.txt ${assembly}/${name}/${name}.contigs.fna ${index} > ${output}/${name}_taxon.region.abundance.txt

@@ -1,0 +1,20 @@
+#!/bin/bash
+#PBS -N GWMC_pyani
+#PBS -l mem=60gb
+#PBS -l nodes=1:ppn=28
+#PBS -l walltime=24:00:00
+#PBS -q bioforce-6
+#PBS -o /nv/hmicro1/jzhao399/scratch/GWMC/${PBS_JOBNAME}_${PBS_JOBID}.out
+#PBS -e /nv/hmicro1/jzhao399/scratch/GWMC/${PBS_JOBNAME}_${PBS_JOBID}.err
+
+module purge
+module load use.own
+module load usearch11/11.0.667
+
+source ~/.bash_profile
+conda init bash
+conda activate base
+
+wd=/nv/hmicro1/jzhao399/scratch/GWMC
+
+~/data/miniconda3/bin/average_nucleotide_identity.py -i /nv/hmicro1/jzhao399/scratch/GWMC/family_Saprospiraceae -m ANIb --workers 28 --gformat pdf --graphics --nocompress -o /nv/hmicro1/jzhao399/scratch/GWMC/family_Saprospiraceae_ABIb
